@@ -222,4 +222,12 @@ def spotify_card():
     </svg>
     """
 
-    return Response(content=svg, media_type="image/svg+xml")
+    return Response(
+    content=svg,
+    media_type="image/svg+xml",
+    headers={
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
+    }
+    )
