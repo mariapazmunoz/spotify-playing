@@ -195,21 +195,30 @@ def spotify_card():
 
     title = info["title"]
     artist = info["artist"]
-    image_url = info.get("image_url","")
+    image_url = info.get("image", "")
 
-    # Long text
     if len(title) > 30:
         title = title[:30] + "..."
 
     if len(artist) > 35:
         artist = artist[:35] + "..."
 
+    embedded_image = ""
+
+    if image_url:
+        image_response = requests.get(image_url)
+        if image_response.status_code == 200:
+            image_base64 = base64.b64encode(image_response.content).decode("utf-8")
+            embedded_image = f"data:image/jpeg;base64,{image_base64}"
+
+    image_tag = ""
+    if embedded_image:
+        image_tag = f'<image href="{embedded_image}" x="20" y="20" width="80" height="80"/>'
+
     svg = f"""
     <svg width="450" height="120" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" rx="18" fill="#121212"/>
-
-        <image href="{image_url}" x="20" y="20" width="80" height="80"/>
-
+        {image_tag}
         <text x="120" y="45" font-size="20" fill="#1DB954" font-family="Arial">
             Spotify Now Playing
         </text>
@@ -222,12 +231,4 @@ def spotify_card():
     </svg>
     """
 
-    return Response(
-    content=svg,
-    media_type="image/svg+xml",
-    headers={
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0"
-    }
-    )
+    return Response(content=svg, media_type="image/svg+xml")
