@@ -171,6 +171,8 @@ def current_song():
         "artist": ", ".join(artist_names),
         "album": song.get("album", {}).get("name", "Unknown album"),
         "song_url": song.get("external_urls", {}).get("spotify"),
+        "progress_ms": data.get("progress_ms", 0),
+        "duration_ms": song.get("duration_ms", 1),
     }
 
 
@@ -180,13 +182,20 @@ def spotify_card():
 
     if info["is_playing"] is False:
         svg = """
-        <svg width="450" height="120" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" rx="18" fill="#121212"/>
-            <text x="20" y="35" font-size="20" fill="#1DB954" font-family="Arial">
-                Spotify
+        <svg width="980" height="340" viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="960" height="320" rx="28" fill="#121212"/>
+            <rect x="42" y="42" width="240" height="240" rx="12" fill="url(#coverGradient)"/>
+            <defs>
+                <linearGradient id="coverGradient" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#6E8BFF"/>
+                    <stop offset="100%" stop-color="#7B4DCC"/>
+                </linearGradient>
+            </defs>
+            <text x="315" y="110" font-size="34" font-weight="700" fill="#F5F5F5" font-family="Arial">
+                Nothing is playing
             </text>
-            <text x="20" y="70" font-size="18" fill="white" font-family="Arial">
-                Not playing anything right now
+            <text x="315" y="160" font-size="22" fill="#B3B3B3" font-family="Arial">
+                Open Spotify and play something ✨
             </text>
         </svg>
         """
@@ -194,26 +203,72 @@ def spotify_card():
 
     title = info["title"]
     artist = info["artist"]
+    progress_ms = info.get("progress_ms", 0)
+    duration_ms = max(info.get("duration_ms", 1), 1)
 
-    if len(title) > 30:
-        title = title[:30] + "..."
+    if len(title) > 24:
+        title = title[:24] + "..."
 
-    if len(artist) > 35:
-        artist = artist[:35] + "..."
+    if len(artist) > 28:
+        artist = artist[:28] + "..."
+
+    progress_ratio = max(0, min(progress_ms / duration_ms, 1))
+    progress_width = int(540 * progress_ratio)
+
+    def ms_to_minsec(ms: int) -> str:
+        seconds = max(ms // 1000, 0)
+        minutes = seconds // 60
+        secs = seconds % 60
+        return f"{minutes}:{secs:02d}"
+
+    current_time = ms_to_minsec(progress_ms)
+    total_time = ms_to_minsec(duration_ms)
 
     svg = f"""
-    <svg width="450" height="120" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" rx="18" fill="#121212"/>
-        <text x="20" y="30" font-size="20" fill="#1DB954" font-family="Arial">
-            Spotify Now Playing
-        </text>
-        <text x="20" y="65" font-size="18" fill="white" font-family="Arial">
+    <svg width="980" height="340" viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="coverGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#6E8BFF"/>
+                <stop offset="100%" stop-color="#7B4DCC"/>
+            </linearGradient>
+        </defs>
+
+        <rect x="10" y="10" width="960" height="320" rx="28" fill="#121212"/>
+
+        <rect x="42" y="42" width="240" height="240" rx="12" fill="url(#coverGradient)"/>
+
+        <text x="315" y="98" font-size="38" font-weight="700" fill="#F5F5F5" font-family="Arial">
             {title}
         </text>
-        <text x="20" y="90" font-size="14" fill="#b3b3b3" font-family="Arial">
+
+        <text x="315" y="148" font-size="26" fill="#B3B3B3" font-family="Arial">
             {artist}
+        </text>
+
+        <circle cx="335" cy="198" r="18" fill="#1ED760"/>
+        <text x="365" y="208" font-size="24" font-weight="700" fill="#1ED760" font-family="Arial">
+            NOW PLAYING
+        </text>
+
+        <rect x="315" y="240" width="540" height="8" rx="4" fill="#4A4A4A"/>
+        <rect x="315" y="240" width="{progress_width}" height="8" rx="4" fill="#1ED760"/>
+
+        <text x="315" y="288" font-size="18" fill="#B3B3B3" font-family="Arial">
+            {current_time}
+        </text>
+
+        <text x="855" y="288" text-anchor="end" font-size="18" fill="#B3B3B3" font-family="Arial">
+            {total_time}
         </text>
     </svg>
     """
 
-    return Response(content=svg, media_type="image/svg+xml")
+    return Response(
+        content=svg,
+        media_type="image/svg+xml",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )
