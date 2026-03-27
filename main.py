@@ -15,6 +15,7 @@ app = FastAPI()
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
+SAVED_REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN")
 
 # Spotify's links
 AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -23,7 +24,7 @@ CURRENT_SONG_URL = "https://api.spotify.com/v1/me/player/currently-playing"
 
 # tokens 
 access_token = None
-refresh_token = None
+refresh_token = SAVED_REFRESH_TOKEN
 
 # Check
 @app.get("/")
@@ -126,7 +127,7 @@ def current_song():
 
     # Check existance
     if access_token is None:
-        raise HTTPException(status_code=401, detail="First go to /login")
+        access_token = get_new_access_token()
 
     headers = {
         "Authorization": f"Bearer {access_token}"
