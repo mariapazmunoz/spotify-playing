@@ -184,14 +184,14 @@ def spotify_card():
     if info["is_playing"] is False:
         svg = """
         <svg width="620" height="215" viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="10" width="960" height="320" rx="28" fill="#121212"/>
-            <rect x="42" y="42" width="240" height="240" rx="12" fill="url(#coverGradient)"/>
             <defs>
                 <linearGradient id="coverGradient" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stop-color="#6E8BFF"/>
                     <stop offset="100%" stop-color="#7B4DCC"/>
                 </linearGradient>
             </defs>
+            <rect x="10" y="10" width="960" height="320" rx="28" fill="#121212"/>
+            <rect x="42" y="42" width="240" height="240" rx="12" fill="url(#coverGradient)"/>
             <text x="315" y="110" font-size="34" font-weight="700" fill="#F5F5F5" font-family="Arial">
                 Nothing is playing
             </text>
@@ -200,7 +200,15 @@ def spotify_card():
             </text>
         </svg>
         """
-        return Response(content=svg, media_type="image/svg+xml")
+        return Response(
+            content=svg,
+            media_type="image/svg+xml",
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            },
+        )
 
     title = info["title"]
     artist = info["artist"]
@@ -235,7 +243,6 @@ def spotify_card():
         </defs>
 
         <rect x="10" y="10" width="960" height="320" rx="28" fill="#121212"/>
-
         <rect x="42" y="42" width="240" height="240" rx="12" fill="url(#coverGradient)"/>
 
         <text x="315" y="98" font-size="38" font-weight="700" fill="#F5F5F5" font-family="Arial">
