@@ -84,7 +84,8 @@ def callback(code: str):
     return {
         "message": "Spotify connected successfully",
         "access_token_saved": access_token is not None,
-        "refresh_token_saved": refresh_token is not None
+        "refresh_token_saved": refresh_token is not None,
+        "refresh_token": refresh_token
     }
 
 # In case of token durations lasts more than 1 hour ()
