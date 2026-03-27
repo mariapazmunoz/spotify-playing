@@ -183,7 +183,7 @@ def spotify_card():
 
     if info["is_playing"] is False:
         svg = """
-        <svg width="980" height="340" viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg">
+        <svg width="620" height="215" viewBox="0 0 240 340" xmlns="http://www.w3.org/2000/svg">
             <rect x="10" y="10" width="960" height="320" rx="28" fill="#121212"/>
             <rect x="42" y="42" width="240" height="240" rx="12" fill="url(#coverGradient)"/>
             <defs>
@@ -226,7 +226,7 @@ def spotify_card():
     total_time = ms_to_minsec(duration_ms)
 
     svg = f"""
-    <svg width="980" height="340" viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg">
+    <svg width="620" height="215" viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="coverGradient" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stop-color="#6E8BFF"/>
