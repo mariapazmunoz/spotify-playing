@@ -171,7 +171,6 @@ def current_song():
         "artist": ", ".join(artist_names),
         "album": song.get("album", {}).get("name", "Unknown album"),
         "song_url": song.get("external_urls", {}).get("spotify"),
-        "image_url": song.get("album", {}).get("images", [{}])[0].get("url")
     }
 
 
@@ -205,13 +204,13 @@ def spotify_card():
     svg = f"""
     <svg width="450" height="120" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" rx="18" fill="#121212"/>
-        <text x="20" y="35" font-size="20" fill="#1DB954" font-family="Arial">
+        <text x="20" y="30" font-size="20" fill="#1DB954" font-family="Arial">
             Spotify Now Playing
         </text>
-        <text x="20" y="70" font-size="18" fill="white" font-family="Arial">
+        <text x="20" y="65" font-size="18" fill="white" font-family="Arial">
             {title}
         </text>
-        <text x="20" y="95" font-size="14" fill="#b3b3b3" font-family="Arial">
+        <text x="20" y="90" font-size="14" fill="#b3b3b3" font-family="Arial">
             {artist}
         </text>
     </svg>
