@@ -195,7 +195,6 @@ def spotify_card():
 
     title = info["title"]
     artist = info["artist"]
-    image_url = info.get("image", "")
 
     if len(title) > 30:
         title = title[:30] + "..."
@@ -203,29 +202,16 @@ def spotify_card():
     if len(artist) > 35:
         artist = artist[:35] + "..."
 
-    embedded_image = ""
-
-    if image_url:
-        image_response = requests.get(image_url)
-        if image_response.status_code == 200:
-            image_base64 = base64.b64encode(image_response.content).decode("utf-8")
-            embedded_image = f"data:image/jpeg;base64,{image_base64}"
-
-    image_tag = ""
-    if embedded_image:
-        image_tag = f'<image href="{embedded_image}" x="20" y="20" width="80" height="80"/>'
-
     svg = f"""
     <svg width="450" height="120" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" rx="18" fill="#121212"/>
-        {image_tag}
-        <text x="120" y="45" font-size="20" fill="#1DB954" font-family="Arial">
+        <text x="20" y="35" font-size="20" fill="#1DB954" font-family="Arial">
             Spotify Now Playing
         </text>
-        <text x="120" y="75" font-size="18" fill="white" font-family="Arial">
+        <text x="20" y="70" font-size="18" fill="white" font-family="Arial">
             {title}
         </text>
-        <text x="120" y="100" font-size="14" fill="#b3b3b3" font-family="Arial">
+        <text x="20" y="95" font-size="14" fill="#b3b3b3" font-family="Arial">
             {artist}
         </text>
     </svg>
